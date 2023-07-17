@@ -1,8 +1,6 @@
 import './style.css'
 import * as THREE from 'three'
 import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls'
-import * as dat from 'dat.gui'
-import gsap from 'gsap'
 import { TextGeometry } from 'three/addons/geometries/TextGeometry.js'
 import { FontLoader } from 'three/addons/loaders/FontLoader.js'
 import vertex from './shaders/donut/vertex.glsl?raw'
@@ -13,9 +11,9 @@ const sizes = {
   width: window.innerWidth,
   height: window.innerHeight
 }
+
 THREE.Cache.enabled = true
 
-const gui = new dat.GUI({ width: 400 })
 
 
 const scene = new THREE.Scene()
@@ -23,41 +21,7 @@ const camera = new THREE.PerspectiveCamera(45, sizes.width / sizes.height)
 camera.position.z = 5
 scene.add(camera)
 
-const parameters = {
-  uTime: 1,
-}
 
-
-// const loadingManager = new THREE.LoadingManager()
-// loadingManager.onStart = (e)=>{
-//   console.log(e);
-//   console.log('start');
-// }
-// loadingManager.onProgress =()=> {
-//   console.log('progress')
-// }
-// loadingManager.onLoad=()=>{
-//   console.log('load');
-// }
-// loadingManager.onError= ()=>{
-//   console.log('error');
-// }
-
-// const textureLoader = new THREE.TextureLoader(loadingManager)
-// const aoTexture = textureLoader.load('/texture/medieval_wood_ao_1k.jpg')
-// const armTexture = textureLoader.load('/texture/medieval_wood_arm_1k.jpg')
-// const diffTexture = textureLoader.load('/texture/medieval_wood_diff_1k.jpg')
-// const nor_Texture = textureLoader.load('/texture/medieval_wood_nor_gl_1k.png')
-// const dispTexture = textureLoader.load('/texture/medieval_wood_disp_1k.jpg')
-// const roughTexture = textureLoader.load('/texture/medieval_wood_rough_1k.jpg')
-
-
-// diffTexture.repeat.x = 2
-// diffTexture.repeat.y = 2
-// diffTexture.wrapS = THREE.RepeatWrapping
-// diffTexture.wrapT = THREE.RepeatWrapping
-
-// diffTexture.minFilter = THREE.NearestFilter
 
 const pointLight = new THREE.PointLight()
 pointLight.intensity = 1
@@ -75,7 +39,7 @@ const donutMat = new THREE.ShaderMaterial(
     vertexShader: vertex,
     fragmentShader: fragment,
     uniforms: {
-      uTime: {value: parameters.uTime}
+      uTime: {value: 1}
     }
   }
 );
@@ -160,7 +124,9 @@ const clock = new THREE.Clock()
 
 const tick = () => {
   const elapsedTime = clock.getElapsedTime()
-  parameters.uTime = elapsedTime
+
+  // parameters.uTime = elapsedTime
+  donutMat.uniforms.uTime.value = elapsedTime
   orbitControls.update()
   renderer.render(scene, camera)
   window.requestAnimationFrame(tick)
